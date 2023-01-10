@@ -5,6 +5,7 @@
 @*dodatkowy UseCases.UseCaseInterfaces*@
 @inject UseCases.CategoriesUseCases.IGetCategoryByIdUseCase GetCategoryByIdUseCase
 @*dodatkowy UseCases.CategoriesUseCases*@
+@inject NavigationManager NavigationManager
 
 <h3>Products</h3>
 <br/>
@@ -23,15 +24,17 @@
             @foreach(var product in products)
             {
                 <tr>
-                    <td>@GetCategoryByIdUseCase.Execute(product.CategoryId)?.Name</td>
+                    <td>@GetCategoryByIdUseCase.Execute(product.CategoryId.Value)?.Name</td>
                     <td>@product.Name</td>
-                    <td>@(Math.Round(product.Price, 2))</td>
+                    <td>@(Math.Round(product.Price.Value, 2))</td>
                     <td>@product.Quantity</td>
                 </tr>
             }
         </tbody>
     </table>
 }
+<br />
+<button type="button" @onclick="OnClickAddProduct" class="btn btn-primary">Add Product</button>
 
 @code {
     private IEnumerable<Product> products;
@@ -41,5 +44,10 @@
         base.OnInitialized();
 
         products = ViewProductsUseCase.Execute();
+    }
+
+    private void OnClickAddProduct()
+    {
+        NavigationManager.NavigateTo("/addproduct");
     }
 }
