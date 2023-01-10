@@ -4,22 +4,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
 using UseCases.DataStorePluginInterfaces;
+using UseCases.UseCaseInterfaces;
 
-namespace UseCases
+namespace UseCases.CategoriesUseCases
 {
-    public class GetCategoryByIdUseCase : IGetCategoryByIdUseCase
+    public class AddCategoryUseCase : IAddCategoryUseCase
     {
         private readonly ICategoryRepository categoryRepository;
 
-        public GetCategoryByIdUseCase(ICategoryRepository categoryRepository)
+        public AddCategoryUseCase(ICategoryRepository categoryRepository)
         {
             this.categoryRepository = categoryRepository;
         }
-        public Category Execute(int categoryId)
+
+        public void Execute(Category category)
         {
-            return categoryRepository.GetCategoryById(categoryId);
+            categoryRepository.AddCategory(category);
         }
     }
 }

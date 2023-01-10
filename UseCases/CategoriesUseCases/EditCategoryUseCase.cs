@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoreBuisness;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,20 +7,19 @@ using System.Threading.Tasks;
 using UseCases.DataStorePluginInterfaces;
 using UseCases.UseCaseInterfaces;
 
-namespace UseCases
+namespace UseCases.CategoriesUseCases
 {
-    public class DeleteCategoryUseCase : IDeleteCategoryUseCase
+    public class EditCategoryUseCase : IEditCategoryUseCase
     {
         private readonly ICategoryRepository categoryRepository;
 
-        public DeleteCategoryUseCase(ICategoryRepository categoryRepository)
+        public EditCategoryUseCase(ICategoryRepository categoryRepository)
         {
             this.categoryRepository = categoryRepository;
         }
-
-        public void Delete(int categoryId)
+        public void Execute(Category category)
         {
-            categoryRepository.DeleteCategory(categoryId);
+            categoryRepository.UpdateCategory(category);
         }
     }
 }
