@@ -1,9 +1,10 @@
 ﻿@page "/transaction"
 @using UseCases
+@inject IJSRuntime JSRuntime
 @inject IGetTransactionsUseCase GetTransactionsUseCase
 
 <div class="row">
-    <div class="col-4">
+    <div class="col-2">
         <label for="cashier">Cashier Name</label>
         <input type="text" id="cashier" class="form-control" @bind-value="cashierName"/>
         </div>
@@ -16,49 +17,57 @@
         <input type="date" id="enddate" class="form-control" @bind-value="endDate" />
     </div>
     <div class="col-2">
+        <label>&nbsp;</label>
         <button type="button" class="btn btn-primary" @onclick="LoadTransactions">Search</button>
+    </div>
+    <div class="col-2">
+        <label>&nbsp;</label>
+        <button type="button" class="btn btn-primary" @onclick="PrintReport">Print</button>
     </div>
 </div>
 <br/>
 @if (transactions != null)
 {
-    <table class="table">
-        <thead>
-        <th>Date Time</th>
-        <th>Cashier Name</th>
-        <th>Product Name</th>
-        <th>Qty Before</th>
-        <th>Qty Sold</th>
-        <th>Qty After</th>
-        <th>Price</th>
-        <th>Sold Amt</th>
-        </thead>
-        <tbody>
-            @foreach (var trans in transactions)
-            {
-                <tr>
-                    <td>@trans.TimeStamp.ToString("yyyy-MM-dd hh:mm")</td>
-                    <td>@trans.CashierName</td>
-                    <td>@trans.ProductName</td>
-                    <td>@trans.BeforeQty</td>
-                    <td>@trans.SoldQty</td>
-                    <td>@(trans.BeforeQty - trans.SoldQty)</td>
-                    <td style="text-align:right">@(string.Format("{0:c}", trans.Price))</td>
-                    <td style="text-align:right">@(string.Format("{0:c}", trans.SoldQty * trans.Price))</td>
-                </tr>
-            }
+    <div id="printarea">
+        <table class="table">
+            <thead>
+            <th>Date Time</th>
+            <th>Cashier Name</th>
+            <th>Product Name</th>
+            <th>Qty Before</th>
+            <th>Qty Sold</th>
+            <th>Qty After</th>
+            <th>Price</th>
+            <th>Sold Amt</th>
+            </thead>
+            <tbody>
+                @foreach (var trans in transactions)
+                {
+                    <tr>
+                        <td>@trans.TimeStamp.ToString("yyyy-MM-dd hh:mm")</td>
+                        <td>@trans.CashierName</td>
+                        <td>@trans.ProductName</td>
+                        <td>@trans.BeforeQty</td>
+                        <td>@trans.SoldQty</td>
+                        <td>@(trans.BeforeQty - trans.SoldQty)</td>
+                        <td style="text-align:right">@(string.Format("{0:c}", trans.Price))</td>
+                        <td style="text-align:right">@(string.Format("{0:c}", trans.SoldQty * trans.Price))</td>
+                    </tr>
+                }
 
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="6">&nbsp;</td>
-                <td style="text-align:right">
-                    <b>Grand Total:</b>
-                </td>
-                <td style="text-align:right"><b>@(string.Format("{0:c}", transactions.Sum(x => x.Price * x.SoldQty)))</b></td>
-            </tr>
-        </tfoot>
-    </table>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6">&nbsp;</td>
+                    <td style="text-align:right">
+                        <b>Grand Total:</b>
+                    </td>
+                    <td style="text-align:right"><b>@(string.Format("{0:c}", transactions.Sum(x => x.Price * x.SoldQty)))</b></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
 }
 @code {
     private string cashierName;
@@ -76,5 +85,10 @@
     private void LoadTransactions()
     {
         transactions = GetTransactionsUseCase.Execute(cashierName, startDate, endDate);
+    }
+
+    private void PrintReport()
+    {
+        JSRuntime.InvokeVoidAsync("print");
     }
 }
